@@ -7,8 +7,10 @@ import Graphics.UI.GLUT hiding (Level,Vector3(..),normalize)
 import qualified Graphics.UI.GLUT as G(Vector3(..))
 
 -- Basic Data Types
-type Pos3 = Vector3 Double
-type Vel3 = Vector3 Double
+type Pos = Double
+type Vel = Double
+type Pos3 = Vector3 Pos
+type Vel3 = Vector3 Vel
 
 -- Reference: Graphics.UI.GLUT.Callbacks.Window
 data Input = Keyboard { key       :: Key, -- Char, SpecialKey or MouseButton

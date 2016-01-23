@@ -8,22 +8,19 @@ import Types
 
 gameUpdate :: SF ParsedInput GameState
 gameUpdate = proc (ParsedInput aCount dCount) -> do
-  ballPos <- uniformMove (vector3 0 0 0) (vector3 0.3 0.3 0) -< ()
+  ballPosX <- bouncing uniformMove 0 0.1 -< ()
+  ballPosY <- bouncing uniformMove 0 0.25 -< ()
   let playerXPos = realToFrac (dCount - aCount)
-  returnA -< Game (vector3 playerXPos (-3) 0) ballPos (vector3 0 0 0)
+  returnA -< Game (vector3 playerXPos (-3) 0) (vector3 ballPosX ballPosY 0) (vector3 0 0 0)
 
-uniformMove :: Pos3 -> Vel3 -> SF () Pos3
+uniformMove :: Pos -> Vel -> SF () Pos
 uniformMove p v = proc _ -> do
-  newPx <- integral >>^ (+ (vector3X p)) -< (vector3X v)
-  newPy <- integral >>^ (+ (vector3Y p)) -< (vector3Y v)
-  newPz <- integral >>^ (+ (vector3Z p)) -< (vector3Z v)
-  returnA -< vector3 newPx newPy newPz
+  newP <- integral >>^ (+ p) -< v
+  returnA -< newP
 
---
--- bouncing :: (Pos -> Vel -> SF () (Pos, Vel)) -> Pos -> Vel -> SF () (Pos, Vel)
--- bouncing move p0 v0 = switch (bX p0 v0) (\ (pos, vel) -> bouncing move pos (-vel))
---     where bX p0' v0' = proc input -> do
---             (pos, vel) <- move p0' v0' -< input
---             event <- edge -< (pos <= -5 || pos >= 10)
---             returnA -< ((pos, vel), event `tag` (pos, vel))
---
+bouncing :: (Pos -> Vel -> SF () Pos) -> Pos -> Vel -> SF () Pos
+bouncing move p v = switch con (\pos -> bouncing move pos (-v))
+  where con = proc input -> do
+              newP <- move p v -< input
+              event <- edge -< (newP <= -4 || newP >= 4)
+              returnA -< (newP, event `tag` newP)

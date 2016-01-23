@@ -54,7 +54,7 @@ renderBall :: (Color4 GLdouble) -> Double -> Double -> Double -> IO()
 renderBall c x y z = preservingMatrix $ do
     color c
     translate $ G.Vector3 (toGD x) (toGD y) (toGD z)
-    renderObject Solid (Sphere' 0.5 20 20)
+    renderObject Solid (Sphere' 0.25 20 20)
 
 renderBox :: (Color4 GLdouble) -> Double -> Double -> Double -> Double -> Double -> IO()
 renderBox c x y z w h = preservingMatrix $ do
