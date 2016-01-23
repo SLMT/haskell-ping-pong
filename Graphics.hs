@@ -3,7 +3,7 @@ module Graphics (initGL, render) where
 import Unsafe.Coerce (unsafeCoerce)
 import FRP.Yampa.Vector3
 
-import Graphics.UI.GLUT hiding (Level,Vector3(..),normalize)
+import Graphics.UI.GLUT hiding (Level,Vector3(..), normalize)
 import qualified Graphics.UI.GLUT as G(Vector3(..))
 
 import Types
@@ -45,26 +45,32 @@ resizeScene s@(Size width height) = do
         h2 = half height
         half z = realToFrac z / 2
 
+-- To GLdouble
+toGD :: Double -> GLdouble
+toGD v = unsafeCoerce v
+
 -- Render Shapes
 renderShapeAt :: (Color4 GLdouble) -> Object -> Double -> Double -> Double -> IO()
 renderShapeAt c s x y z = preservingMatrix $ do
     color c
-    putStrLn ("x: " ++ show x ++ ", y: " ++ show y ++ ", z: " ++ show z)
-    translate $ G.Vector3 (adjust x) (adjust y) (adjust z)
+    translate $ G.Vector3 (toGD x) (toGD y) (toGD z)
     renderObject Solid s
-    where adjust :: Double -> GLdouble
-          adjust v = unsafeCoerce (0.5 - 3.0 + v)
 
 -- Render the game
 render :: GameState -> IO ()
 render (Game p bp _) = do
     clear [ ColorBuffer, DepthBuffer ]
     loadIdentity
-    renderShapeAt red ballObj 100 100 100
-    renderShapeAt green playerObj (vector3X bp) (vector3Y bp) (vector3Z bp)
+    lookAt eyeAt centerAt upVec
+    renderShapeAt red ballObj 0 1.0 10
+    -- renderShapeAt green playerObj (vector3X bp) (vector3Y bp) (vector3Z bp)
+    renderShapeAt green playerObj 0 (-1.0) 10
     swapBuffers
     where ballObj = Sphere' 0.5 20 20
-          playerObj = Teapot 2
+          playerObj = Teapot 1
+          eyeAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 0.0)
+          centerAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 10.0)
+          upVec = G.Vector3 (toGD 0.0) (toGD 1.0) (toGD 0.0)
 
 -- ============================================================
 
