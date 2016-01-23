@@ -69,7 +69,7 @@ render (Game p bp _) = do
     clear [ ColorBuffer, DepthBuffer ]
     loadIdentity
     lookAt eyeAt centerAt upVec
-    renderBall red 0 1.0 0
+    renderBall red (vector3X bp) (vector3Y bp) 0
     -- putStrLn ("x: " ++ show (vector3X p) ++ ", y: " ++ show (vector3Y p))
     renderBox green (vector3X p) (vector3Y p) 0 1 0.1 -- Player
     swapBuffers
