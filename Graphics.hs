@@ -19,7 +19,7 @@ initGL = do
     initialDisplayMode $= [ WithDepthBuffer, DoubleBuffered ]
     createWindow "Ping Pong"
     depthFunc          $= Just Less
-    clearColor         $= Color4 255 255 255 0
+    clearColor         $= Color4 0 0 0 0
     light (Light 0)    $= Enabled
     lighting           $= Enabled
     lightModelAmbient  $= Color4 0.5 0.5 0.5 1
@@ -49,12 +49,19 @@ resizeScene s@(Size width height) = do
 toGD :: Double -> GLdouble
 toGD v = unsafeCoerce v
 
--- Render Shapes
-renderShapeAt :: (Color4 GLdouble) -> Object -> Double -> Double -> Double -> IO()
-renderShapeAt c s x y z = preservingMatrix $ do
+-- Render Objects
+renderBall :: (Color4 GLdouble) -> Double -> Double -> Double -> IO()
+renderBall c x y z = preservingMatrix $ do
     color c
     translate $ G.Vector3 (toGD x) (toGD y) (toGD z)
-    renderObject Solid s
+    renderObject Solid (Sphere' 0.5 20 20)
+
+renderBox :: (Color4 GLdouble) -> Double -> Double -> Double -> Double -> Double -> IO()
+renderBox c x y z w h = preservingMatrix $ do
+    color c
+    translate $ G.Vector3 (toGD x) (toGD y) (toGD z)
+    scale (toGD w) (toGD h) (toGD w)
+    renderObject Solid (Cube 1)
 
 -- Render the game
 render :: GameState -> IO ()
@@ -62,14 +69,12 @@ render (Game p bp _) = do
     clear [ ColorBuffer, DepthBuffer ]
     loadIdentity
     lookAt eyeAt centerAt upVec
-    renderShapeAt red ballObj 0 1.0 10
-    -- renderShapeAt green playerObj (vector3X bp) (vector3Y bp) (vector3Z bp)
-    renderShapeAt green playerObj 0 (-1.0) 10
+    renderBall red 0 1.0 0
+    -- putStrLn ("x: " ++ show (vector3X p) ++ ", y: " ++ show (vector3Y p))
+    renderBox green (vector3X p) (vector3Y p) 0 1 0.1 -- Player
     swapBuffers
-    where ballObj = Sphere' 0.5 20 20
-          playerObj = Teapot 1
-          eyeAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 0.0)
-          centerAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 10.0)
+    where eyeAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 10.0)
+          centerAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 0.0)
           upVec = G.Vector3 (toGD 0.0) (toGD 1.0) (toGD 0.0)
 
 -- ============================================================
