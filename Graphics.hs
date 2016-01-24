@@ -76,26 +76,3 @@ render (Game p bp _) = do
     where eyeAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 10.0)
           centerAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 0.0)
           upVec = G.Vector3 (toGD 0.0) (toGD 1.0) (toGD 0.0)
-
--- ============================================================
-
-{-|
-render gs@(Game{ xpos, ypos, xvel, yvel, playerXPos, playerXVel }) = do
-    clear [ ColorBuffer, DepthBuffer ]
-    loadIdentity
-    renderBall $ vector3 (0) (unsafeCoerce ypos) (-20)
-    renderPlayer $ vector3 (unsafeCoerce playerXPos) (0) (-20)
-    swapBuffers
-    where size2 :: R
-          size2 = (fromInteger $ 6)/2
-          green  = Color4 0.8 1.0 0.7 0.9 :: Color4 R
-          greenG = Color4 0.8 1.0 0.7 1.0 :: Color4 R
-          red    = Color4 1.0 0.7 0.8 1.0 :: Color4 R
-          renderShapeAt s p = preservingMatrix $ do
-            translate $ G.Vector3 (0.5 - size2 + vector3X p)
-                                  (0.5 - size2 + vector3Y p)
-                                  (0.5 - size2 + vector3Z p)
-            renderObject Solid s
-          renderBall   = (color red >>) . (renderShapeAt $ Sphere' 0.5 20 20)
-          renderPlayer   = (color green >>) . (renderShapeAt $ Cube 2)
--}
