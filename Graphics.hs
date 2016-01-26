@@ -63,15 +63,23 @@ renderBox c x y z w h = preservingMatrix $ do
     scale (toGD w) (toGD h) (toGD w)
     renderObject Solid (Cube 1)
 
+showFailMsg :: Bool -> IO()
+showFailMsg True = do
+    renderBox red 0 0 0 0.5 0.5
+showFailMsg False = do
+    return ()
+
+
 -- Render the game
 render :: GameState -> IO ()
-render (Game p bp _) = do
+render (Game p bp isEnd) = do
     clear [ ColorBuffer, DepthBuffer ]
     loadIdentity
     lookAt eyeAt centerAt upVec
     renderBall red (vector3X bp) (vector3Y bp) 0
-    -- putStrLn ("x: " ++ show (vector3X p) ++ ", y: " ++ show (vector3Y p))
+    putStrLn ("isEnd: " ++ show isEnd ++ ", y: " ++ show (vector3Y bp))
     renderBox green (vector3X p) (vector3Y p) 0 1 0.1 -- Player
+    showFailMsg isEnd
     swapBuffers
     where eyeAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 10.0)
           centerAt = Vertex3 (toGD 0.0) (toGD 0.0) (toGD 0.0)

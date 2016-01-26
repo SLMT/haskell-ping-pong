@@ -19,7 +19,7 @@ data Input = Keyboard { key       :: Key, -- Char, SpecialKey or MouseButton
 
 data ParsedInput = ParsedInput { aCount :: Double, dCount :: Double }
 
-data GameState = Game { playerPos :: Pos3, ballPos :: Pos3, ballVel :: Vel3 }
+data GameState = Game { playerPos :: Pos3, ballPos :: Pos3, end :: Bool }
 
 {-|
 

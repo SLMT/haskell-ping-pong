@@ -11,7 +11,7 @@ import Input
 import Graphics
 import GameLogic
 
-mainSF = parseInput >>> gameUpdate >>^ (\gs -> render gs)
+mainSF = parseInput >>> gameMain >>^ (\gs -> render gs)
 
 -- | Main, initializes Yampa and sets up reactimation loop
 main :: IO ()
