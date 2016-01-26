@@ -11,6 +11,7 @@ import Types
 -- Colors
 green  = Color4 0.8 1.0 0.7 0.9 :: Color4 GLdouble
 red    = Color4 1.0 0.7 0.8 1.0 :: Color4 GLdouble
+failRed = Color4 1.0 0.0 0.0 1.0 :: Color4 GLdouble
 
 -- Initialize OpenGL
 initGL :: IO ()
@@ -65,7 +66,7 @@ renderBox c x y z w h = preservingMatrix $ do
 
 showFailMsg :: Bool -> IO()
 showFailMsg True = do
-    renderBox red 0 0 0 0.5 0.5
+    renderBox failRed 0 0 10 100 100
 showFailMsg False = do
     return ()
 
@@ -76,8 +77,9 @@ render (Game p bp isEnd) = do
     clear [ ColorBuffer, DepthBuffer ]
     loadIdentity
     lookAt eyeAt centerAt upVec
+
     renderBall red (vector3X bp) (vector3Y bp) 0
-    putStrLn ("isEnd: " ++ show isEnd ++ ", y: " ++ show (vector3Y bp))
+--    putStrLn ("isEnd: " ++ show isEnd ++ ", y: " ++ show (vector3Y bp))
     renderBox green (vector3X p) (vector3Y p) 0 1 0.1 -- Player
     showFailMsg isEnd
     swapBuffers
